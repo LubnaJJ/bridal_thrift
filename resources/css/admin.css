@@ -1,0 +1,22 @@
+/* public/css/admin.css */
+.card {
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: #5a67d8;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #4c51bf;
+}
+
+.navbar {
+    background-color: #f7fafc;
+}
+
+.nav-link {
+    color: #2d3748 !important;
+}
