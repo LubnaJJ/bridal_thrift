@@ -11,7 +11,7 @@ class AnalyticsController extends Controller
 {
     public function index()
     {
-        // Get all businesses with their respective product count
+        // Get all businesses with their respective product count and color
         $businesses = Business::withCount('products')->get(); // Adjust 'products' to the relationship name in your model
 
         // Other data

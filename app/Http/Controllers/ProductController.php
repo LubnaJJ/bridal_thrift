@@ -34,12 +34,12 @@ class ProductController extends Controller
 }
 
 
-    public function index()
-    {
-        // Get all products or filter by business_id if needed
-        $products = Product::all();
-        return response()->json($products);
-    }
+public function index()
+{
+    $products = Product::all(); // Fetch all products
+    return view('products', compact('products')); // Pass products to the view
+}
+
     public function store(Request $request)
 {
     $request->validate([

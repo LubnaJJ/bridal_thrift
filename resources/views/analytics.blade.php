@@ -3,17 +3,15 @@
 @section('content')
     <div style="display: flex; min-height: 100vh; margin: 0; padding: 0;">
 
-       
-
         <!-- Main Content Area -->
         <div style="flex-grow: 1; background-image: url('/images/banner.jpg'); background-size: cover; background-position: center; padding: 50px; margin: 0; margin-top: -20px; margin-left: -10px; margin-right: -30px;">
             <h2 style="color: #ffffff; font-size: 25px;">Analytics</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-                <!-- Pie Chart: Businesses Count -->
+                <!-- Updated Businesses Overview Chart -->
                 <div class="bg-white p-6 rounded-lg shadow">
                     <h3 class="text-lg font-semibold">Businesses Overview</h3>
-                    <canvas id="businessPieChart"></canvas>
+                    <canvas id="businessOverviewChart"></canvas>
                 </div>
 
                 <!-- Products by Business Chart -->
@@ -39,20 +37,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Businesses Pie Chart with individual businesses
-        const businessLabels = @json($businesses->pluck('name')); // Fetch business names
-        const businessData = @json($businesses->pluck('products_count')); // Fetch the count of products per business
+        // Updated Businesses Overview Chart
+        const businessOverviewLabels = @json($businesses->pluck('name')); // Fetch business names
+        const businessOverviewData = Array(businessOverviewLabels.length).fill(1); // All businesses have a count of 1
 
-        const ctxBusiness = document.getElementById('businessPieChart').getContext('2d');
-        const businessPieChart = new Chart(ctxBusiness, {
-            type: 'pie',
+        const ctxOverview = document.getElementById('businessOverviewChart').getContext('2d');
+        const businessOverviewChart = new Chart(ctxOverview, {
+            type: 'bar',
             data: {
-                labels: businessLabels,
+                labels: businessOverviewLabels,
                 datasets: [{
-                    data: businessData,
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
-                    ],
+                    label: 'Number of Businesses',
+                    data: businessOverviewData,
+                    backgroundColor: '#FF6384',
                 }]
             },
             options: {
@@ -61,9 +58,7 @@
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                let label = businessLabels[tooltipItem.dataIndex];
-                                let value = businessData[tooltipItem.dataIndex];
-                                return `${label}: ${value}`;
+                                return `${businessOverviewLabels[tooltipItem.dataIndex]}: 1`;
                             }
                         }
                     }

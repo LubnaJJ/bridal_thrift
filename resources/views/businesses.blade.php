@@ -1,195 +1,267 @@
+<!-- resources/views/businesses.blade.php -->
 @extends('layouts.basic')
+
+@section('navbar')
+    <div class="navbar">
+        <h2>Admin Menu</h2>
+        <a href="{{ url('/customers') }}">View Customers</a>
+        <a href="{{ url('/businesses') }}">View Businesses</a>
+        <a href="{{ url('/logout') }}">Logout</a>
+    </div>
+@endsection
 
 @section('content')
     <style>
-        /* Ensure the body takes up the full height and removes default margins */
         html, body {
             height: 100%;
             margin: 0;
             background-image: url('/images/banner.jpg');
-            background-size: cover; /* Cover the entire screen */
-            background-position: center; /* Center the background image */
+            background-size: cover;
+            background-position: center;
         }
 
-        /* Sidebar styles */
-        .sidebar {
-            width: 250px; /* Width of the sidebar */
-            background-color: rgba(45, 55, 72, 0.9); /* Sidebar color */
-            color: white;
-            height: 100vh; /* Full height of the viewport */
-            position: fixed; /* Fixed position */
-            padding: 20px;
-            z-index: 1000; /* Ensure it is on top */
-        }
-
-        /* Main content container */
         .content {
-            margin-left: 100px; /* Leave space for the sidebar */
+            margin-left: 0px;
             padding: 20px;
-            min-height: 40vh; /* Full height of the viewport */
-            display: flex; /* Flexbox for alignment */
-            flex-wrap: wrap; /* Allow wrapping of cards */
-            gap: 20px; /* Gap between cards */
+            min-height: 40vh;
         }
 
-        /* Card styles */
-        .business-card {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            width: 250px;
-            background-color: rgba(249, 249, 249, 0.9); /* Slight transparency */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
-            transition: transform 0.2s; /* Animation on hover */
         }
 
-        .business-card:hover {
-            transform: scale(1.05); /* Scale up on hover */
+        th, td {
+            padding: 12px;
+            text-align: left;
         }
 
-        /* Button styles */
-        .more-info-button, .toggle-form-button {
-            margin-top: 10px;
-            padding: 5px 10px;
+        th {
             background-color: #3490dc;
+            color: white;
+        }
+
+        td {
+            background-color: rgba(249, 249, 249, 0.9);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-button, .delete-button {
+            padding: 5px 10px;
             color: white;
             border-radius: 5px;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s; /* Smooth transition */
-        }
-        
-        .more-info-button:hover, .toggle-form-button:hover {
-            background-color: #2779bd; /* Darker shade on hover */
         }
 
-        /* Form styles */
-        .form-container {
-            display: none; /* Initially hidden */
-            background-color: rgba(249, 249, 249, 0.9);
+        .edit-button {
+            background-color: #28a745;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        .edit-button:hover {
+            background-color: #218838;
+        }
+
+        .plus-icon {
+            display: block;
+            width: 30px;
+            height: 30px;
+            margin: 20px auto;
+            cursor: pointer;
+            background-color: #3490dc;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-size: 20px;
+        }
+
+        .business-form {
+            display: none;
+            margin-top: 10px;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        input[type="number"] {
+        .business-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .business-form input {
             width: 100%;
             padding: 10px;
-            margin: 5px 0 15px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        .submit-button {
-            padding: 10px 15px;
+        .business-form button {
+            padding: 10px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            width: 48%;
+            font-size: 16px;
         }
 
-        .submit-button:hover {
+        .business-form button:hover {
             background-color: #218838;
         }
-        .minus-icon {
-            display: block;
-            width: 30px;
-            height: 30px;
-            background-color: #dc3545; /* Red background for the minus icon */
-            color: white;
-            border-radius: 50%; /* Make it circular */
-            text-align: center;
-            line-height: 30px; /* Center the text vertically */
-            font-size: 20px; /* Icon size */
-            position: absolute; /* Position it in the card */
-            top: 10px; /* Adjust as needed */
-            right: 10px; /* Adjust as needed */
-            cursor: pointer;
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
         }
     </style>
 
-    <!-- Plus Icon Button -->
-    <button class="toggle-form-button" onclick="toggleForm()">+</button>
-
-    <!-- Business Registration Form -->
-    <div class="form-container" id="business-form">
-        <h2>Register a New Business</h2>
-        <form action="{{ route('business.store') }}" method="POST">
-            @csrf
-            <input type="text" name="business_name" placeholder="Business Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="address" placeholder="Address" required>
-            <input type="text" name="phone_number" placeholder="Phone Number" required>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" class="submit-button">Register Business</button>
-        </form>
-    </div>
-
-    <!-- Main Content -->
     <div class="content">
-        @if(count($businesses) > 0)
-            @foreach($businesses as $business)
-                <div class="business-card">
-                    <span class="minus-icon" onclick="confirmDelete({{ $business->id }})">-</span>
-                    <h3 style="font-size: 1.25rem; font-weight: bold;">{{ $business->business_name }}</h3>
-                    <button class="more-info-button" onclick="toggleInfo({{ $business->id }})">More Info</button>
-                    <div id="info-{{ $business->id }}" style="display: none; margin-top: 10px;">
-                        <p><strong>Email:</strong> {{ $business->email }}</p>
-                        <p><strong>Address:</strong> {{ $business->address }}</p>
-                        <p><strong>Phone:</strong> {{ $business->phone_number }}</p>
-                        <p><strong>Username:</strong> {{ $business->username }}</p>
-                    </div>
+        <h1>Businesses List</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Business Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Phone Number</th>
+                    <th>Username</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($businesses as $business)
+                    <tr>
+                        <td>{{ $business->business_name }}</td>
+                        <td>{{ $business->email }}</td>
+                        <td>{{ $business->address }}</td>
+                        <td>{{ $business->phone_number }}</td>
+                        <td>{{ $business->username }}</td>
+                        <td class="action-buttons">
+                            <button class="edit-button" onclick="openEditModal({{ json_encode($business) }})">Edit</button>
+
+                            <!-- Delete button -->
+                            <form action="{{ route('business.destroy', $business->id) }}" method="POST" onsubmit="return confirmDelete({{ $business->id }})">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="delete-button">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Plus icon for adding a new business -->
+        <div class="plus-icon" onclick="toggleAddModal()">+</div>
+
+        <!-- Business creation form -->
+        <div id="new-business-form" class="business-form">
+            <h2>Add New Business</h2>
+            <form action="{{ route('business.store') }}" method="POST">
+                @csrf
+                <div>
+                    <label for="business_name">Business Name:</label>
+                    <input type="text" name="business_name" required>
                 </div>
-            @endforeach
-        @else
-            <p>No businesses found.</p>
-        @endif
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div>
+                    <label for="address">Address:</label>
+                    <input type="text" name="address" required>
+                </div>
+                <div>
+                    <label for="phone_number">Phone:</label>
+                    <input type="text" name="phone_number" required>
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="editModal" class="business-form">
+            <h2>Edit Business</h2>
+            <form id="editForm" action="{{ route('business.update', '') }}" method="POST">
+                @csrf
+                <input type="hidden" id="businessId" name="id">
+                <div class="form-group">
+                    <label for="edit_business_name">Business Name</label>
+                    <input type="text" id="edit_business_name" name="business_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_email">Email</label>
+                    <input type="email" id="edit_email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_address">Address</label>
+                    <input type="text" id="edit_address" name="address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_phone_number">Phone Number</label>
+                    <input type="text" id="edit_phone_number" name="phone_number" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_username">Username</label>
+                    <input type="text" id="edit_username" name="username" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        function toggleForm() {
-            const form = document.getElementById('business-form');
+        function openEditModal(business) {
+            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('businessId').value = business.id;
+            document.getElementById('edit_business_name').value = business.business_name;
+            document.getElementById('edit_email').value = business.email;
+            document.getElementById('edit_address').value = business.address;
+            document.getElementById('edit_phone_number').value = business.phone_number;
+            document.getElementById('edit_username').value = business.username;
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function toggleAddModal() {
+            const form = document.getElementById('new-business-form');
             form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
         }
 
-        function toggleInfo(id) {
-            const info = document.getElementById('info-' + id);
-            info.style.display = info.style.display === 'none' ? 'block' : 'none';
-        }
-
         function confirmDelete(id) {
-            if (confirm("Are you sure you want to delete this business?")) {
-                deleteBusiness(id);
-            }
-        }
-
-        function deleteBusiness(id) {
-            fetch(`/businesses/delete/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token for security
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => {
-                if (response.ok) {
-                    location.reload(); // Reload the page to reflect changes
-                } else {
-                    alert('Failed to delete the business.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while trying to delete the business.');
-            });
+            return confirm('Are you sure you want to delete this business?');
         }
     </script>
 @endsection

@@ -4,17 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AnalyticsController;
+use App\Models\Customer; // Import the Customer model
+use App\Http\Controllers\ProductController;
+
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
 
 // Welcome route
 Route::get('/', function () {
     return view('welcome');
 });
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
 
 // Middleware for authenticated users
 Route::middleware([
@@ -22,8 +22,10 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    // Dashboard route with customer data
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $customers = Customer::all(); // Fetch all customers
+        return view('dashboard', compact('customers')); // Pass customers to the view
     })->name('dashboard');
 });
 
@@ -54,5 +56,17 @@ Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('c
 // Update customer
 Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
-Route::post('/customers/update/{id}', [CustomerController::class, 'update'])->name('update.customer');
+
 Route::post('/customers/add', [CustomerController::class, 'store'])->name('add.customer.store'); // For adding new customers
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+
+Route::delete('/customers/delete/{id}', [CustomerController::class, 'destroy'])->name('customers.delete');
+Route::put('/customers/update/{id}', [CustomerController::class, 'update'])->name('update.customer');
+
+
+Route::get('/businesses', [BusinessController::class, 'index'])->name('business.index');
+Route::post('/business/update', [BusinessController::class, 'update'])->name('business.update');
+Route::delete('/business/{id}', [BusinessController::class, 'destroy'])->name('business.destroy');
+
+Route::resource('business', BusinessController::class);

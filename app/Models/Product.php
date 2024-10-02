@@ -19,10 +19,10 @@ class Product extends Model
     ];
 
     // Product.php (Model)
-public function business()
-{
-    return $this->belongsTo(Business::class);
-}
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id');
+    }
 
 }
 

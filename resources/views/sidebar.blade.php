@@ -10,6 +10,9 @@
         <li style="margin-bottom: 10px;">
             <a href="{{ url('/admin/businesses') }}" style="color: #ffffff; text-decoration: none; padding: 10px; display: block; border-radius: 5px; transition: background 0.3s;">View Businesses</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('products.index') }}">Products</a>
+        </li>
     </ul>
 </div>
 
